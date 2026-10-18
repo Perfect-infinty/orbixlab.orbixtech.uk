@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Artemis — Open-Source AI Agent | Orbix Labs</title>
+    <meta
+      name="description"
+      content="Artemis is a free, open-source AI agent that lives on your computer. It reads your files, runs your commands and remembers what you tell it. You pick the model. You keep the data. MIT licensed."
+    />
+    <meta name="theme-color" content="#1a1a2e" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Artemis — Open-Source AI Agent | Orbix Labs"
+    />
+    <meta
+      property="og:description"
+      content="A free, open-source AI agent that lives on your computer. You pick the model. You keep the data. You press approve."
+    />
+    <meta property="og:image" content="images/logo.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="apple-touch-icon" href="images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Antonio:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              blue: {
+                DEFAULT: "#1a1a2e",
+                deep: "#161625",
+                night: "#101019",
+                soft: "#272740",
+              },
+              panel: "#1f1f35",
+              cream: "#FFF8DC",
+              amber: "#FFBF00",
+              bronze: "#CD7F32",
+              cyan: "#4dd0e1",
+            },
+            fontFamily: {
+              display: ["Antonio", "Impact", "sans-serif"],
+              mono: ['"IBM Plex Mono"', "monospace"],
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background: #1a1a2e;
+        color: #fff8dc;
+      }
+      .rays {
+        background: repeating-conic-gradient(
+          from 0deg at 50% 50%,
+          rgba(255, 255, 255, 0.55) 0 0.35deg,
+          transparent 0.35deg 3deg
+        );
+        -webkit-mask-image: radial-gradient(
+          circle,
+          transparent 38%,
+          #000 40%,
+          #000 70%,
+          transparent 71%
+        );
+        mask-image: radial-gradient(
+          circle,
+          transparent 38%,
+          #000 40%,
+          #000 70%,
+          transparent 71%
+        );
+      }
+      .scan::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        mix-blend-mode: multiply;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(11, 16, 80, 0.28) 0 1px,
+          transparent 1px 3px
+        );
+      }
+      .btn {
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      details > summary {
+        list-style: none;
+      }
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+      details[open] .plus {
+        transform: rotate(45deg);
+      }
+      .plus {
+        transition: transform 0.2s;
+      }
+      .tab[aria-selected="true"] {
+        background: #ffbf00;
+        color: #1a1a2e;
+      }
+    </style>
+  </head>
+  <body
+    class="overflow-x-hidden font-sans antialiased selection:bg-amber selection:text-blue"
+  >
+    <!-- NAV -->
+    <header class="relative z-20">
+      <div
+        class="max-w-7xl mx-auto px-6 pt-8 grid grid-cols-[1fr_auto_1fr] items-start gap-4"
+      >
+        <nav
+          class="hidden md:flex justify-between pr-10 pt-10 font-mono text-sm uppercase tracking-[.18em] text-cream/80"
+        >
+          <a
+            data-gh
+            href="https://github.com/Perfect-infinty/Artemis"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-cream"
+            >Orbix Labs</a
+          >
+          <a href="#screens" class="hover:text-cream">Screens</a>
+          <a href="#features" class="hover:text-cream">Features</a>
+          <a href="#agents" class="hover:text-cream">Agents</a>
+        </nav>
+        <div class="col-start-2 md:col-start-2 text-center mx-auto md:mx-0">
+          <a href="#top" class="inline-block">
+            <img
+              src="images/logo.png"
+              alt="Artemis logo"
+              width="48"
+              height="48"
+              class="w-12 h-12 mx-auto rounded-xl mb-2"
+            />
+            <div
+              class="font-display text-4xl leading-[.9] uppercase tracking-tight"
+            >
+              Artemis
+            </div>
+          </a>
+        </div>
+        <nav
+          class="hidden md:flex justify-between pl-10 pt-10 font-mono text-sm uppercase tracking-[.18em] text-cream/80"
+        >
+          <a href="#faq" class="hover:text-cream">FAQ</a>
+          <a
+            data-gh
+            href="https://github.com/Perfect-infinty/Artemis"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-cream"
+            >GitHub</a
+          >
+          <a
+            href="#downloads"
+            class="px-4 py-2 bg-blue-night/60 hover:bg-blue-night text-cream btn"
+            >Download</a
+          >
+        </nav>
+        <a
+          href="#downloads"
+          class="md:hidden justify-self-end font-mono text-xs uppercase tracking-widest px-3 py-2 bg-blue-night/60"
+          >Download</a
+        >
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- HERO -->
+      <section
+        class="overflow-x-clip max-w-4xl mx-auto px-6 pt-10 pb-14 text-center"
+      >
+        <div>
+          <h1
+            class="font-display font-light uppercase leading-[.92] tracking-tight text-[clamp(2.8rem,6.5vw,5.6rem)]"
+          >
+            Your Agent<br />On Your Desktop
+          </h1>
+          <p
+            class="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-cream/85 leading-relaxed"
+          >
+            Not a chatbot in a browser tab. Artemis lives on your computer,
+            reads your files, runs your commands and remembers what you told it.
+            You pick the model. You keep the data. You press approve.
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a
+              href="#downloads"
+              class="btn px-6 py-3 bg-amber text-blue font-display text-2xl uppercase hover:bg-cream"
+              >Download</a
+            >
+            <a
+              data-gh
+              href="https://github.com/Perfect-infinty/Artemis"
+              target="_blank"
+              rel="noopener"
+              class="btn px-6 py-3 bg-blue-soft/70 font-display text-2xl uppercase hover:bg-amber hover:text-blue"
+              >View on GitHub</a
+            >
+          </div>
+          <p
+            class="mt-5 font-mono text-xs uppercase tracking-[.18em] text-cream/60"
+          >
+            Free · MIT licensed · No account
+          </p>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="border-t border-bronze/60 bg-blue-deep">
+        <div
+          class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-8"
+        >
+          <div>
+            <p class="font-display text-6xl leading-none text-amber">MIT</p>
+            <p
+              class="mt-2 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+            >
+              Free. No catch.
+            </p>
+          </div>
+          <div>
+            <p class="font-display text-6xl leading-none text-amber">70</p>
+            <p
+              class="mt-2 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+            >
+              Tools built in
+            </p>
+          </div>
+          <div>
+            <p class="font-display text-6xl leading-none text-amber">4</p>
+            <p
+              class="mt-2 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+            >
+              Agents at once
+            </p>
+          </div>
+          <div>
+            <p class="font-display text-6xl leading-none text-amber">Any</p>
+            <p
+              class="mt-2 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+            >
+              Model you bring
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREENSHOTS -->
+      <section id="screens" class="border-t border-bronze/60">
+        <div class="max-w-7xl mx-auto px-6 py-24">
+          <figure class="mt-12 border border-bronze/60 bg-panel">
+            <img
+              src="images/hero.png"
+              alt="Artemis main window with a chat, the sidebar and the side panel open"
+              width="1440"
+              height="800"
+              loading="lazy"
+              class="w-full h-auto"
+            />
+          </figure>
+          <div
+            class="grid sm:grid-cols-2 gap-px bg-bronze/60 border border-bronze/60 border-t-0"
+          >
+            <figure class="bg-panel">
+              <img
+                src="images/agents.png"
+                alt="Sub-agents working in parallel on one task"
+                width="1440"
+                height="801"
+                loading="lazy"
+                class="w-full h-auto"
+              />
+              <figcaption
+                class="p-5 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+              >
+                Sub-agents in parallel
+              </figcaption>
+            </figure>
+            <figure class="bg-panel">
+              <img
+                src="images/quick-window.png"
+                alt="Quick window opened from the tray"
+                width="1440"
+                height="801"
+                loading="lazy"
+                class="w-full h-auto"
+              />
+              <figcaption
+                class="p-5 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+              >
+                Quick window from any app
+              </figcaption>
+            </figure>
+          </div>
+          <div
+            class="grid sm:grid-cols-2 gap-px bg-bronze/60 border border-bronze/60 border-t-0"
+          >
+            <figure class="bg-panel">
+              <img
+                src="images/sentinel.png"
+                alt="Sentinel voice mode"
+                width="558"
+                height="610"
+                loading="lazy"
+                class="w-full h-auto max-h-[560px] object-contain"
+              />
+              <figcaption
+                class="p-5 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+              >
+                Sentinel voice mode
+              </figcaption>
+            </figure>
+            <figure class="bg-panel">
+              <img
+                src="images/security.png"
+                alt="Settings, Security: app lock and voice recognition"
+                width="558"
+                height="610"
+                loading="lazy"
+                class="w-full h-auto max-h-[560px] object-contain"
+              />
+              <figcaption
+                class="p-5 font-mono text-xs uppercase tracking-[.18em] text-cream/70"
+              >
+                App lock and voice recognition
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHAT IS -->
+      <section class="border-t border-bronze/60">
+        <div class="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-14">
+          <h2
+            class="font-display font-light uppercase leading-[.95] text-6xl sm:text-8xl"
+          >
+            What Is<br />Artemis?
+          </h2>
+          <div class="self-center">
+            <p class="text-xl text-cream/90 leading-relaxed">
+              It is not a chat window glued to one API. It is not a copilot
+              stuck inside an editor.
+            </p>
+            <p class="mt-5 text-lg text-cream/80 leading-relaxed">
+              Artemis lives on your computer. It works in your files, your
+              terminal and your browser. It remembers what it learns. It asks
+              before it acts. Pick any model, cloud or local, and it does the
+              job.
+            </p>
+            <p class="mt-5 text-lg text-cream/80 leading-relaxed">
+              Chats, notes and memory stay on your disk. Every line of code is
+              open. Fork it, break it, fix it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section id="features" class="border-t border-bronze/60 bg-blue-deep">
+        <div class="max-w-7xl mx-auto px-6 py-24">
+          <h2
+            class="font-display font-light uppercase leading-none text-6xl sm:text-8xl"
+          >
+            What It Does
+          </h2>
+          <p class="mt-6 max-w-2xl text-lg text-cream/80 leading-relaxed">
+            One app. Every tool group has an off switch.
+          </p>
+          <div
+            class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-bronze/60 border border-bronze/60"
+          >
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #1 AGENT
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Does The Work
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Reads your files. Writes them. Edits them. Searches the web.
+                Stays inside the project folder and asks before it changes
+                anything.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #2 OFFICE FILES
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Speaks Spreadsheet
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Excel, CSV, Word, PDF. It reads them all, and writes
+                spreadsheets with real formulas. Drop a file in and ask.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #3 COMPUTER
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Hands On Keyboard
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                On macOS it looks at your screen, moves the mouse and types. It
+                asks once per task. One shortcut stops it dead.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #4 BROWSER
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Its Own Browser
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Tabs with their own saved logins. The agent reads, clicks and
+                fills pages. Your everyday browser stays out of it.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #5 TERMINAL
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                A Real Shell
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Runs commands in your shell and reads a live terminal. A
+                blocklist catches the obvious disasters. It is not a sandbox.
+                Read before you approve.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #6 SUB-AGENTS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Four At Once
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                One task, four workers. Each has a role, a model and only the
+                tools it needs. Write your own in Markdown.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #7 BRAINS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                A Council Of Minds
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Lancelot, Galahad, Gawain. Different personalities on different
+                models. Ask one, or let them vote on who answers.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #8 SKILLS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Learns Your Workflows
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Do it once. Save it as a skill. Artemis reuses it and improves
+                it. Plain SKILL.md folders, the same layout as agentskills.io.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #9 AUTOMATIONS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Works While You Sleep
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Schedule any prompt: once, every N minutes, daily, weekly,
+                monthly. Pick a cheap model for it. The result lands on your
+                phone. Build Make.com scenarios by asking.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #10 MEMORY
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Remembers
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Not just one chat. Every chat. Facts it keeps, notes in plain
+                Markdown, [[wiki links]] and a graph. No cloud vault.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #11 PROJECTS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Context That Stays
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                A project is instructions plus a folder. Chats attach to it.
+                Moving from ChatGPT or Claude? Import your history.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #12 TELEGRAM
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Lives In Your Pocket
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Message it from your phone. Same agent, same memory, same
+                projects. Ask for a screenshot of your desktop.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #13 VOICE
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Just Say It
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Wake word or push-to-talk. Speech recognition runs on your
+                machine. It talks back through local voices like Piper, Kokoro
+                and Chatterbox.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #14 SECURITY
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Locked To You
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Password, recovery code, Touch ID. Offline voice recognition
+                that answers only you. A stranger gets one line: Unauthorized
+                access.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #15 PROVIDERS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Bring Any Model
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                OpenRouter, OpenAI, the Anthropic API, Cloudflare, Ollama, LM
+                Studio, or anything that speaks the OpenAI API. No default
+                provider. No lock-in. Daily and monthly spend limits.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #16 MCP
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Both Directions
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Plug MCP servers in as connectors. Or let Claude Code drive
+                Artemis through its own local MCP server: 127.0.0.1 only, bearer
+                token.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #17 SHORTCUTS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                One Key Away
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Quick chat and quick search from any app. A command palette.
+                Tabs, split view, find in every chat and note. Shortcuts you set
+                yourself.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                #18 LOCAL
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Your Disk, Your Rules
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Chats, notes and memory are files on your machine. Keys sit in
+                your OS keychain. Writes are atomic and backed up.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- AGENTS -->
+      <section id="agents" class="border-t border-bronze/60 bg-blue-deep">
+        <div class="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-14">
+          <div>
+            <h2
+              class="font-display font-light uppercase leading-[.95] text-6xl sm:text-8xl"
+            >
+              A Team<br />Behind<br />Every Task
+            </h2>
+            <p class="mt-8 max-w-md text-lg text-cream/85 leading-relaxed">
+              Artemis splits a job and hands the parts to role agents. Four run
+              at once. Each gets only the tools its role needs.
+            </p>
+            <p class="mt-5 max-w-md text-cream/70 leading-relaxed">
+              Write your own as a Markdown file. Name, role, instructions,
+              model, tools. Keep it private or inside a project.
+            </p>
+            <ul class="mt-5 max-w-md space-y-2 text-cream/70 leading-relaxed">
+              <li>
+                Never delete files, run shell commands or control the computer.
+              </li>
+              <li>Every write still asks you first.</li>
+              <li>Each agent can use its own model.</li>
+              <li>
+                Project agents live in
+                <span class="font-mono text-cream/80">.artemis/agents</span> and
+                never override built-in ones.
+              </li>
+            </ul>
+          </div>
+          <div
+            class="divide-y divide-bronze/60 border-y border-bronze/60 self-center"
+          >
+            <div class="py-6 flex items-baseline justify-between gap-6">
+              <h3 class="font-display text-5xl uppercase">Athena</h3>
+              <p
+                class="font-mono text-xs uppercase tracking-[.18em] text-cream/70 text-right"
+              >
+                Researcher · finds and checks facts
+              </p>
+            </div>
+            <div class="py-6 flex items-baseline justify-between gap-6">
+              <h3 class="font-display text-5xl uppercase">Hephaestus</h3>
+              <p
+                class="font-mono text-xs uppercase tracking-[.18em] text-cream/70 text-right"
+              >
+                Coder · small, careful changes
+              </p>
+            </div>
+            <div class="py-6 flex items-baseline justify-between gap-6">
+              <h3 class="font-display text-5xl uppercase">Calliope</h3>
+              <p
+                class="font-mono text-xs uppercase tracking-[.18em] text-cream/70 text-right"
+              >
+                Writer · emails, docs, posts
+              </p>
+            </div>
+            <div class="py-6 flex items-baseline justify-between gap-6">
+              <h3 class="font-display text-5xl uppercase">Themis</h3>
+              <p
+                class="font-mono text-xs uppercase tracking-[.18em] text-cream/70 text-right"
+              >
+                Reviewer · checks the others, read-only
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SAFETY -->
+      <section id="security" class="border-t border-bronze/60">
+        <div class="max-w-7xl mx-auto px-6 py-24">
+          <h2
+            class="font-display font-light uppercase leading-none text-6xl sm:text-8xl"
+          >
+            You Stay<br />In Control
+          </h2>
+          <p class="mt-6 max-w-2xl text-lg text-cream/80 leading-relaxed">
+            An agent with your files and your shell is powerful. So it comes
+            with rules.
+          </p>
+          <div
+            class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-bronze/60 border border-bronze/60"
+          >
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                APPROVALS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Asks First
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Edits, moves, deletes, shell, screen control. You see a card and
+                you decide. Deletes always ask.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                CONFINED
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Stays In Its Folder
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                File tools cannot leave the project. Not with .. and not with
+                symlinks. Credentials and browser profiles ask every single
+                time.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                UNTRUSTED INPUT
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                Doubts The Web
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                Web pages, files and screenshots are treated as untrusted.
+                Prompt injection is still unsolved. Read what you approve.
+              </p>
+            </article>
+            <article class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cyan">
+                HONEST LIMITS
+              </p>
+              <h3 class="mt-4 font-display text-4xl uppercase leading-none">
+                No Magic
+              </h3>
+              <p class="mt-4 text-cream/80 leading-relaxed">
+                The terminal blocklist is not a sandbox. The app lock is not
+                disk encryption. Releases are unsigned. We say it here so you do
+                not find out later.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- OPEN SOURCE -->
+      <section id="open-source" class="border-t border-bronze/60 bg-blue-deep">
+        <div
+          class="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-14 items-center"
+        >
+          <div>
+            <h2
+              class="font-display font-light uppercase leading-[.95] text-6xl sm:text-8xl"
+            >
+              Read It.<br />Run It.<br />Change It.
+            </h2>
+            <p class="mt-8 max-w-md text-lg text-cream/85 leading-relaxed">
+              No waitlist. No demo call. No account. Plain JavaScript on
+              Electron, React and Vite. You add your own model provider and that
+              is it.
+            </p>
+            <p class="mt-5 max-w-md text-cream/70 leading-relaxed">
+              Tests are plain Node scripts that run without Electron. Keep pull
+              requests small. agents.md explains how it is built.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a
+                data-gh
+                href="https://github.com/Perfect-infinty/Artemis"
+                target="_blank"
+                rel="noopener"
+                class="btn px-5 py-3 bg-amber text-blue font-display text-xl uppercase hover:bg-cream"
+                >GitHub</a
+              >
+              <a
+                data-gh
+                data-path="/blob/main/CONTRIBUTING.md"
+                href="https://github.com/Perfect-infinty/Artemis/blob/main/CONTRIBUTING.md"
+                target="_blank"
+                rel="noopener"
+                class="btn px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+                >Contribute</a
+              >
+              <a
+                data-gh
+                data-path="/blob/main/SECURITY.md"
+                href="https://github.com/Perfect-infinty/Artemis/blob/main/SECURITY.md"
+                target="_blank"
+                rel="noopener"
+                class="btn px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+                >Security policy</a
+              >
+            </div>
+          </div>
+          <pre
+            class="bg-blue-night border border-bronze/60 p-6 font-mono text-sm leading-relaxed overflow-x-auto text-cream/90"
+          ><code><span class="text-cream/50"># Node.js 20+ and pnpm</span>
+git clone https://github.com/Perfect-infinty/Artemis.git artemis
+cd artemis
+pnpm install
+
+pnpm dev      <span class="text-cream/50"># Vite + Electron, hot reload</span>
+pnpm start    <span class="text-cream/50"># build and run</span>
+pnpm test     <span class="text-cream/50"># unit tests, no Electron</span>
+pnpm dist     <span class="text-cream/50"># macOS arm64 .dmg (unsigned)</span></code></pre>
+        </div>
+      </section>
+
+      <!-- DOWNLOADS -->
+      <section id="downloads" class="border-t border-bronze/60">
+        <div class="max-w-7xl mx-auto px-6 py-24">
+          <h2
+            class="font-display font-light uppercase leading-none text-6xl sm:text-8xl"
+          >
+            Artemis Desktop
+          </h2>
+          <p class="mt-4 text-cream/80 text-lg">
+            Free and MIT licensed. Ready-made app for Apple silicon. Windows and
+            Linux run from source.
+          </p>
+          <div
+            class="mt-12 grid sm:grid-cols-3 gap-px bg-bronze/60 border border-bronze/60"
+          >
+            <div class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cream/70">
+                APPLE SILICON
+              </p>
+              <h3 class="mt-3 font-display text-5xl uppercase">macOS</h3>
+              <a
+                data-dl
+                href="https://github.com/Perfect-infinty/Artemis/releases/latest"
+                target="_blank"
+                rel="noopener"
+                class="btn mt-8 inline-block px-5 py-3 bg-amber text-blue font-display text-xl uppercase hover:bg-cream hover:text-blue"
+                >Download .dmg</a
+              >
+            </div>
+            <div class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cream/70">
+                FROM SOURCE
+              </p>
+              <h3 class="mt-3 font-display text-5xl uppercase">Windows</h3>
+              <a
+                data-gh
+                data-path="#open-source"
+                href="#open-source"
+                class="btn mt-8 inline-block px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+                >Build from source</a
+              >
+            </div>
+            <div class="bg-panel p-8">
+              <p class="font-mono text-xs tracking-[.18em] text-cream/70">
+                FROM SOURCE
+              </p>
+              <h3 class="mt-3 font-display text-5xl uppercase">Linux</h3>
+              <a
+                data-gh
+                data-path="#open-source"
+                href="#open-source"
+                class="btn mt-8 inline-block px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+                >Build from source</a
+              >
+            </div>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a
+              data-gh
+              href="https://github.com/Perfect-infinty/Artemis"
+              target="_blank"
+              rel="noopener"
+              class="btn px-5 py-3 bg-amber text-blue font-display text-xl uppercase hover:bg-cream"
+              >GitHub repo</a
+            >
+            <a
+              data-rel
+              href="https://github.com/Perfect-infinty/Artemis/releases"
+              target="_blank"
+              rel="noopener"
+              class="btn px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+              >All releases</a
+            >
+            <a
+              data-hf
+              href="#"
+              class="btn px-5 py-3 bg-blue-soft/70 font-display text-xl uppercase hover:bg-amber hover:text-blue"
+              >Hugging Face</a
+            >
+          </div>
+          <ul class="mt-8 max-w-3xl space-y-2 text-cream/70 leading-relaxed">
+            <li>
+              The macOS build is unsigned. macOS asks you to confirm the first
+              launch.
+            </li>
+            <li>Computer control and Touch ID work on macOS only.</li>
+            <li>
+              Voice recognition downloads a small speaker model (about 28 MB)
+              once, from Settings, Security.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="border-t border-bronze/60 bg-blue-deep">
+        <div class="max-w-4xl mx-auto px-6 py-24">
+          <h2
+            class="font-display font-light uppercase leading-none text-6xl sm:text-8xl"
+          >
+            FAQs
+          </h2>
+          <div
+            class="mt-12 divide-y divide-bronze/60 border-y border-bronze/60"
+          >
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Is Artemis free?<span class="plus text-4xl font-light">+</span>
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Yes. MIT licensed. The only bill is the model provider you
+                choose. Local models cost nothing.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Which models can I use?<span class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Anything that speaks the OpenAI API: OpenRouter, OpenAI, the
+                Anthropic API, Cloudflare, Ollama, LM Studio and more. Add as
+                many providers as you like. Pick a model per chat, per sub-agent
+                or per scheduled task.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Can I run local models?<span class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Yes. Ollama, LM Studio or any local server. Tools need a model
+                that supports tool calling. Small models cope better with fewer
+                tools turned on, and Ollama needs a bigger context length than
+                its default.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Where is my data stored?<span class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                On your computer. Chats, notes and memory are local files. API
+                keys and tokens are encrypted with your OS keychain.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                What can Artemis do on my computer?<span
+                  class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Only what you allow. File tools stay in the project folder.
+                Writes, deletes, terminal and computer control ask first. Every
+                tool group can be switched off in Settings.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Is it safe to let an agent run commands?<span
+                  class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                As safe as the approvals you read. The terminal blocklist is not
+                a sandbox, and web pages and files can hide instructions meant
+                to trick a model. Keep approvals on. Start in a test folder.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Can I use it from my phone?<span
+                  class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Yes, through Telegram. Pair a private chat and talk to the same
+                agent. Artemis keeps running in the tray.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                How do the lock and voice recognition work?<span
+                  class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Set a password in Settings, Security. Artemis can lock at start,
+                when idle and when the Mac sleeps. Unlock with Touch ID, your
+                password or your voice. Speaker recognition runs offline and
+                keeps no recordings. It is an app lock, not disk encryption.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Which systems are supported?<span
+                  class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                A ready-made .dmg for macOS on Apple silicon. Windows and Linux
+                run from source with Node.js 20+ and pnpm. Computer control and
+                Touch ID are macOS only.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                How can I contribute?<span class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Open an issue or a small pull request. Read CONTRIBUTING.md
+                first. Report security problems privately through the repository
+                Security tab.
+              </p>
+            </details>
+            <details class="py-6">
+              <summary
+                class="flex justify-between items-center cursor-pointer font-display text-3xl uppercase"
+              >
+                Who makes Artemis?<span class="plus text-4xl font-light"
+                  >+</span
+                >
+              </summary>
+              <p class="mt-4 max-w-2xl text-cream/80 leading-relaxed">
+                Orbix Labs. Artemis is independent and not affiliated with
+                Anthropic or any other model provider.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-bronze/60 overflow-x-clip">
+      <div class="max-w-7xl mx-auto px-6 pt-16 pb-8">
+        <div
+          class="grid sm:grid-cols-3 gap-10 font-mono text-sm uppercase tracking-[.14em]"
+        >
+          <div class="flex flex-col gap-3">
+            <span class="text-cream/60">Artemis</span
+            ><a href="#features" class="hover:underline">Features</a
+            ><a href="#agents" class="hover:underline">Agents</a
+            ><a href="#security" class="hover:underline">Security</a
+            ><a href="#downloads" class="hover:underline">Download</a>
+          </div>
+          <div class="flex flex-col gap-3">
+            <span class="text-cream/60">Community</span
+            ><a
+              data-gh
+              href="https://github.com/Perfect-infinty/Artemis"
+              target="_blank"
+              rel="noopener"
+              class="hover:underline"
+              >GitHub</a
+            ><a
+              data-rel
+              href="https://github.com/Perfect-infinty/Artemis/releases"
+              target="_blank"
+              rel="noopener"
+              class="hover:underline"
+              >Releases</a
+            ><a data-hf href="#" class="hover:underline">Hugging Face</a
+            ><a
+              data-gh
+              data-path="/blob/main/CONTRIBUTING.md"
+              href="https://github.com/Perfect-infinty/Artemis/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener"
+              class="hover:underline"
+              >Contribute</a
+            ><a href="#faq" class="hover:underline">FAQ</a>
+          </div>
+          <div class="flex flex-col gap-3">
+            <span class="text-cream/60">Orbix Labs</span><span>Open Source</span
+            ><span>MIT License</span>
+          </div>
+        </div>
+        <div class="mt-16 flex items-end justify-between gap-6 flex-wrap">
+          <div
+            class="font-display font-light uppercase leading-[.8] text-[clamp(5rem,20vw,16rem)] tracking-tight"
+          >
+            Artemis
+          </div>
+          <img
+            src="images/logo.png"
+            alt=""
+            width="64"
+            height="64"
+            loading="lazy"
+            class="w-16 h-16 rounded-2xl mb-3"
+          />
+        </div>
+        <p
+          class="mt-8 font-mono text-xs uppercase tracking-[.14em] text-cream/60"
+        >
+          © 2026 Orbix Labs · MIT License
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Links (no trailing slash). Set huggingface to your Hugging Face page; its buttons stay hidden while it is empty.
+      // If the GitHub org or repo is renamed, update these.
+      const LINKS = {
+        github: "https://github.com/Perfect-infinty/Artemis",
+        download: "https://github.com/Perfect-infinty/Artemis/releases/latest",
+        releases: "https://github.com/Perfect-infinty/Artemis/releases",
+        huggingface: "https://huggingface.co/OrbixLab",
+      };
+      document.querySelectorAll("[data-gh]").forEach((a) => {
+        const p = a.getAttribute("data-path") || "";
+        if (p.startsWith("#")) return; // in-page anchor, leave as is
+        if (LINKS.github !== "#") {
+          a.href = LINKS.github + p;
+          a.target = "_blank";
+          a.rel = "noopener";
+        }
+      });
+      document
+        .querySelectorAll("[data-dl]")
+        .forEach((a) => (a.href = LINKS.download));
+      document.querySelectorAll("[data-rel]").forEach((a) => {
+        a.href = LINKS.releases;
+        a.target = "_blank";
+        a.rel = "noopener";
+      });
+      document.querySelectorAll("[data-hf]").forEach((a) => {
+        if (LINKS.huggingface) {
+          a.href = LINKS.huggingface;
+          a.target = "_blank";
+          a.rel = "noopener";
+        } else a.style.display = "none";
+      });
+    </script>
+  </body>
+</html>
